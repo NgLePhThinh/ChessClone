@@ -24,5 +24,9 @@ namespace ChessClone
         {
             return true;
         }
+        public override void deleteFirstMove()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

@@ -8,7 +8,7 @@ namespace ChessClone
 {
     public abstract class Piece
     {
-        private Point point;
+        private Point x;
         private bool white;
         private PieceDigits digit;
         private Board board;
@@ -16,14 +16,15 @@ namespace ChessClone
         {
 
             this.white =   white;
-            this.point = new Point(x, y);
+            this.x = new Point(x, y);
             this.digit = digits;
-            this.board = board;
+            this.Board = board;
         }
         public bool White { get => white; set => white = value; }
-        public Point Point { get => point; set => point = value; }
+        public Point Point { get => x; set => x = value; }
         public PieceDigits Digit { get => digit; set => digit = value; }
         public Board Board { get => board; set => board = value; }
+
 
         /// <summary>
         /// Kiểm tra nước đi hợp lệ
@@ -55,5 +56,8 @@ namespace ChessClone
             dx = Math.Abs(Point.X - x.X);
             dy = Math.Abs(Point.Y - x.Y);
         }
+        public abstract void deleteFirstMove();
+        
+
     }
 }

@@ -77,6 +77,7 @@ namespace ChessClone
         }
         public override bool checkMoveto(Point x)
         {
+            //this.Board.IsSafeMove(this.Point);
             int dx = -99999, dy = 99999;
             calcdxdy(x, ref dx, ref dy);
             if (dx == 0 && dy == 0) return false;
@@ -92,6 +93,10 @@ namespace ChessClone
                 return true;
             }
             return false;
+        }
+        public override void deleteFirstMove()
+        {
+            
         }
     }
 }

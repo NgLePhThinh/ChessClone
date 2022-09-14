@@ -13,6 +13,8 @@ namespace ChessClone
         }
         public override bool checkMoveto(Point x)
         {
+            //this.Board.IsSafeMove(this.Point);
+
             Rook xe = new Rook(this.White, this.Point.X, this.Point.Y, this.Board);
             Bishop tuong = new Bishop(this.White, this.Point.X, this.Point.Y, this.Board);
             return xe.checkMoveto(x) || tuong.checkMoveto(x);
@@ -30,6 +32,10 @@ namespace ChessClone
         public override bool checkEmptySpot(Point x)
         {
             throw new NotImplementedException();
+        }
+        public override void deleteFirstMove()
+        {
+           
         }
     }
 }

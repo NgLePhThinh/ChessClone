@@ -11,10 +11,12 @@ namespace ChessClone
     public class Board
     {
         private Piece[,] pieces;
-        private PictureBox[, ] pictureBoxes;
+        private PictureBox[,] pictureBoxes;
         private Color whitecolor, blackcolor;
-        private Point whiteKingLocate, blackKingLocate; 
-        private int[,] safeWhiteKingMove, safeBlackKingMove;
+        private Point whiteKingLocate, blackKingLocate;
+        private int[,] dangerousWhite, dangerousBlack;
+
+
 
         #region property
         public Piece[,] Pieces { get => pieces; set => pieces = value; }
@@ -23,8 +25,10 @@ namespace ChessClone
         public Point WhiteKingLocate { get => whiteKingLocate; set => whiteKingLocate = value; }
         public Point BlackKingLocate { get => blackKingLocate; set => blackKingLocate = value; }
         public PictureBox[,] PictureBoxes { get => pictureBoxes; set => pictureBoxes = value; }
-        public int[,] SafeWhiteKingMove { get => safeWhiteKingMove; set => safeWhiteKingMove = value; }
-        public int[,] SafeBlackKingMove { get => safeBlackKingMove; set => safeBlackKingMove = value; }
+        public int[,] DangerousWhite { get => dangerousWhite; set => dangerousWhite = value; }
+        public int[,] DangerousBlack { get => dangerousBlack; set => dangerousBlack = value; }
+
+
         #endregion
         public Board()
         {
@@ -32,10 +36,11 @@ namespace ChessClone
             PictureBoxes = new PictureBox[9, 9];
             Whitecolor = Color.White;
             Blackcolor = Color.Gray;
-            WhiteKingLocate = new Point(5,1);
-            BlackKingLocate = new Point(5,8);
-            SafeBlackKingMove = new int[9,9];
-            SafeWhiteKingMove = new int[9, 9]; 
+            WhiteKingLocate = new Point(5, 1);
+            BlackKingLocate = new Point(5, 8);
+            DangerousWhite = new int[3, 3] { { -1, -1, -1 }, { -1, -1, -1 }, { -1, -1, -1 } };
+            DangerousBlack = new int[3, 3] { { -1, -1, -1 }, { -1, -1, -1 }, { -1, -1, -1 } };
+
         }
         #region click event
         private event EventHandler click;
@@ -81,6 +86,7 @@ namespace ChessClone
             this.SetPiece(new Rook(true, 1, 1, this), new Point(1, 1));
             this.SetPiece(new Rook(true, 8, 1, this), new Point(8, 1));
 
+
             //BlackPieces
             this.SetPiece(new King(false, 5, 8, this), new Point(5, 8));
             this.SetPiece(new Queen(false, 4, 8, this), new Point(4, 8));
@@ -94,16 +100,16 @@ namespace ChessClone
             pnl.Width = Contant.Width * Contant.Cols;
             pnl.Height = Contant.Height * Contant.Rows;
             Boolean iswhite = true;
-            for(int y = 1; y <= Contant.Rows; y++)
+            for (int y = 1; y <= Contant.Rows; y++)
             {
-                for(int x = 1; x <= Contant.Cols; x++)
+                for (int x = 1; x <= Contant.Cols; x++)
                 {
                     PictureBox ptb = new PictureBox();
                     ptb.Width = Contant.Width;
                     ptb.Height = Contant.Height;
                     Color color = iswhite ? this.Whitecolor : this.Blackcolor;
                     ptb.BackColor = color;
-                    ptb.Location = new System.Drawing.Point(Contant.Width *(x-1),Contant.Height*(Contant.Rows - y));
+                    ptb.Location = new System.Drawing.Point(Contant.Width * (x - 1), Contant.Height * (Contant.Rows - y));
                     ptb.Click += Ptb_Click;
                     pnl.Controls.Add(ptb);
                     PictureBoxes[y, x] = ptb;
@@ -120,12 +126,12 @@ namespace ChessClone
         /// </summary>
         public void insertChessImage()
         {
-            for(int y = Contant.Rows; y >= 1 ; y--)
+            for (int y = Contant.Rows; y >= 1; y--)
             {
-                for(int x = 1; x <= Contant.Cols; x ++)
+                for (int x = 1; x <= Contant.Cols; x++)
                 {
-                    if (Pieces[y,x].Digit == PieceDigits.Empty)
-                       PictureBoxes[y,x].Image = null;
+                    if (Pieces[y, x].Digit == PieceDigits.Empty)
+                        PictureBoxes[y, x].Image = null;
                     else
                     {
                         String path = @"Resources\";
@@ -133,6 +139,8 @@ namespace ChessClone
                         path += Pieces[y, x].Digit;
                         path += ".png";
                         PictureBoxes[y, x].Image = Image.FromFile(path);
+
+
                     }
                 }
             }
@@ -195,12 +203,12 @@ namespace ChessClone
         /// <returns>Tọa độ PictureBox ,(-1,-1) khi tọa độ không hợp lệ</returns>
         public Point GetPicturePoint(PictureBox pictureBox)
         {
-            for(int y = 1; y <= Contant.Rows; y ++)
+            for (int y = 1; y <= Contant.Rows; y++)
             {
-                for(int x= 1; x <= Contant.Cols; x++)
+                for (int x = 1; x <= Contant.Cols; x++)
                 {
                     if (this.PictureBoxes[y, x] == pictureBox)
-                        return new Point(x,y);
+                        return new Point(x, y);
                 }
             }
             return new Point(-1, -1);
@@ -209,5 +217,16 @@ namespace ChessClone
         {
             return this.PictureBoxes[x.Y, x.X];
         }
+        public bool IsSafeMove(Point x)
+        {
+            GamePlay gamePlay = new GamePlay();
+            Piece piece = this.GetPiece(x);
+            Point kingLocate = this.GetPiece(x).White ? this.WhiteKingLocate : this.BlackKingLocate;
+            this.SetEmptyPiece(x, this);
+            bool isSafe = gamePlay.AttackTo(this, kingLocate).Any() ? false : true;
+            this.SetPiece(piece, x);
+            return piece.Digit == PieceDigits.King ? true : isSafe;
+        }
+
     }
 }

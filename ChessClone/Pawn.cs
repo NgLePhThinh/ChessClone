@@ -8,11 +8,14 @@ namespace ChessClone
 {
     public class Pawn : Piece
     {
+        private bool fisrtMove;
         public Pawn(bool white, int x, int y, Board board) : base(white, x, y, PieceDigits.Pawn, board)
         {
+            fisrtMove = false;
         }
         public override bool checkMoveto(Point x)
         {
+            //this.Board.IsSafeMove(this.Point);
             int dx = Math.Abs(x.X - Point.X);
             if (this.White == true)
             {
@@ -83,6 +86,7 @@ namespace ChessClone
         {
             throw new NotImplementedException();
         }
+        public override void deleteFirstMove(){}
     }
 }
 

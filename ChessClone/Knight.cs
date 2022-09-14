@@ -11,6 +11,7 @@ namespace ChessClone
         public Knight(bool white, int x, int y, Board board) : base(white, x, y, PieceDigits.Knight, board) { }
         public override bool checkMoveto(Point x)
         {
+            //this.Board.IsSafeMove(this.Point);
             return Math.Abs(x.X - Point.X) * Math.Abs(x.Y - Point.Y) == 2
                 && this.Board.checkPiece(x, this.White, PieceDigits.Empty);
         }
@@ -27,6 +28,9 @@ namespace ChessClone
         public override bool checkEmptySpot(Point x)
         {
             throw new NotImplementedException();
+        }
+        public override void deleteFirstMove()
+        {  
         }
     }
 }

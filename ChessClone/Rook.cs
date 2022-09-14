@@ -8,8 +8,13 @@ namespace ChessClone
 {
     public class Rook: Piece
     {
+        private bool firstMove;
+
+        public bool FirstMove { get => firstMove; set => firstMove = value; }
+
         public Rook(bool white, int x, int y, Board board) : base(white, x, y, PieceDigits.Rook, board)
         {
+            FirstMove = true;
         }
         /// <summary>
         /// Tìm điểm bắt đầu và kết thúc của tọa độ hoặc x hoặc y quân xe
@@ -72,6 +77,7 @@ namespace ChessClone
         }
         public override bool checkMoveto(Point x)
         {
+            //this.Board.IsSafeMove(this.Point);
             int dx = 9999, dy = 9999;
             calcdxdy(x, ref dx, ref dy);
             return ((dx == 0 || dy == 0) && dx != dy)//đúng quy luật
@@ -87,6 +93,10 @@ namespace ChessClone
                 return true;
             }
             return false;
+        }
+        public override void deleteFirstMove()
+        {
+            firstMove = false;
         }
     }
 }
