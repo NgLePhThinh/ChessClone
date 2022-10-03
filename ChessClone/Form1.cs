@@ -22,7 +22,7 @@ namespace ChessClone
         {
             InitializeComponent();
             LoadForm();
-
+           
         }
         public void LoadForm()
         {
@@ -36,10 +36,7 @@ namespace ChessClone
             p2 = new Player(false, false);
         }
 
-        private void Form1_Load(object sender, EventArgs e)
-        {
-
-        }
+        
 
         /// <summary>
         /// 
@@ -68,6 +65,13 @@ namespace ChessClone
                     Piece pieceStart = map.Pieces[startPoint.Y, startPoint.X];
                     if (pieceStart.checkMoveto(point) && map.IsSafeMove(startPoint))
                     {
+                        if(pieceStart.Digit == PieceDigits.Pawn && (point.Y == 1 || point.Y == 8))
+                        {
+                            Promote promote = new Promote(pieceStart.White);
+                            promote.ShowDialog();
+                            PieceDigits digit = promote.pieceDigits;
+                            pieceStart = gamePlay.Promote(map, pieceStart, digit);
+                        }
                         if (pieceStart.Digit == PieceDigits.King)
                         {
                             if (pieceStart.White)
@@ -75,13 +79,18 @@ namespace ChessClone
                             else
                                 map.BlackKingLocate = point;
                         }
-                        pieceStart.deleteFirstMove();
+
+                        gamePlay.UpdateFirstMove(map, pieceStart, point);
+                        gamePlay.DeleteFirstMove(map, pieceStart);
                         gamePlay.MoveChessPiece(startPoint, point, map);
                         gamePlay.CancelChoose(startPoint, map);
+                        gamePlay.ResetCheck(map, whiteTurn);
                         whiteTurn = !whiteTurn;
                         startPoint = new Point(-1, -1);
                         gamePlay.UpdateDangerousKingMove(map, whiteTurn);
-                        gamePlay.Check(map, whiteTurn,pieceStart);
+                        if(gamePlay.Check(map, whiteTurn,pieceStart))
+                            this.panel1.Enabled = false;
+                        
                     }
                 }
                 else if (typeNumber != 0)

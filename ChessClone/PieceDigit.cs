@@ -17,4 +17,5 @@ namespace ChessClone
         Queen,
         King
     }
+
 }

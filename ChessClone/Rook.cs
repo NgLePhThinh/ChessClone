@@ -98,5 +98,12 @@ namespace ChessClone
         {
             firstMove = false;
         }
+        public override void updateFirstMove()
+        {
+        }
+        public override bool getFirstMove()
+        {
+            return false;
+        }
     }
 }

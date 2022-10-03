@@ -10,14 +10,13 @@ namespace ChessClone
 {
     public class Board
     {
+        #region field
         private Piece[,] pieces;
         private PictureBox[,] pictureBoxes;
         private Color whitecolor, blackcolor;
         private Point whiteKingLocate, blackKingLocate;
         private int[,] dangerousWhite, dangerousBlack;
-
-
-
+        #endregion
         #region property
         public Piece[,] Pieces { get => pieces; set => pieces = value; }
         public Color Whitecolor { get => whitecolor; set => whitecolor = value; }
@@ -30,6 +29,7 @@ namespace ChessClone
 
 
         #endregion
+        #region constructor
         public Board()
         {
             Pieces = new Piece[9, 9];
@@ -40,8 +40,8 @@ namespace ChessClone
             BlackKingLocate = new Point(5, 8);
             DangerousWhite = new int[3, 3] { { -1, -1, -1 }, { -1, -1, -1 }, { -1, -1, -1 } };
             DangerousBlack = new int[3, 3] { { -1, -1, -1 }, { -1, -1, -1 }, { -1, -1, -1 } };
-
         }
+        #endregion
         #region click event
         private event EventHandler click;
         public event EventHandler Click
@@ -99,7 +99,7 @@ namespace ChessClone
 
             pnl.Width = Contant.Width * Contant.Cols;
             pnl.Height = Contant.Height * Contant.Rows;
-            Boolean iswhite = true;
+            Boolean iswhite = false;
             for (int y = 1; y <= Contant.Rows; y++)
             {
                 for (int x = 1; x <= Contant.Cols; x++)
@@ -113,7 +113,6 @@ namespace ChessClone
                     ptb.Click += Ptb_Click;
                     pnl.Controls.Add(ptb);
                     PictureBoxes[y, x] = ptb;
-                    //PictureBoxes[y, x].Enabled = false;
                     iswhite = !iswhite;
 
                 }
@@ -163,10 +162,10 @@ namespace ChessClone
             Pieces[x.Y, x.X] = piece;
             Pieces[x.Y, x.X].Point = x;
         }
-        public void SetEmptyPiece(Point x, Board board)
+        public void SetEmptyPiece(Point x)
         {
-            board.Pieces[x.Y, x.X] = new Empty(true, x.X, x.Y, PieceDigits.Empty, board);
-            board.Pieces[x.Y, x.X].Point = x;
+            this.Pieces[x.Y, x.X] = new Empty(true, x.X, x.Y, PieceDigits.Empty, this);
+            this.Pieces[x.Y, x.X].Point = x;
         }
         /// <summary>
         /// Kiểm tra trạng thái ô cờ
@@ -222,7 +221,8 @@ namespace ChessClone
             GamePlay gamePlay = new GamePlay();
             Piece piece = this.GetPiece(x);
             Point kingLocate = this.GetPiece(x).White ? this.WhiteKingLocate : this.BlackKingLocate;
-            this.SetEmptyPiece(x, this);
+            if (gamePlay.AttackTo(this, kingLocate).Any()) return true;
+            this.SetEmptyPiece(x);
             bool isSafe = gamePlay.AttackTo(this, kingLocate).Any() ? false : true;
             this.SetPiece(piece, x);
             return piece.Digit == PieceDigits.King ? true : isSafe;

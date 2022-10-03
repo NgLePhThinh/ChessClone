@@ -28,5 +28,12 @@ namespace ChessClone
         {
             throw new NotImplementedException();
         }
+        public override void updateFirstMove()
+        {
+        }
+        public override bool getFirstMove()
+        {
+            return false;
+        }
     }
 }

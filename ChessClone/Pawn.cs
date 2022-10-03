@@ -9,18 +9,29 @@ namespace ChessClone
     public class Pawn : Piece
     {
         private bool fisrtMove;
+
+        public bool FisrtMove { get => fisrtMove; set => fisrtMove = value; }
+
         public Pawn(bool white, int x, int y, Board board) : base(white, x, y, PieceDigits.Pawn, board)
         {
-            fisrtMove = false;
+            FisrtMove = false;
         }
         public override bool checkMoveto(Point x)
         {
-            //this.Board.IsSafeMove(this.Point);
             int dx = Math.Abs(x.X - Point.X);
             if (this.White == true)
             {
+                if(this.Point.Y == 5 && x.Y == 6 && Math.Abs(Point.X - x.X) == 1)
+                {
+                    Piece piece = this.Board.GetPiece(new Point(x.X,x.Y-1));
+                    if(piece.Digit == PieceDigits.Pawn && piece.getFirstMove())
+                    {
+                        return true;
+                    }
+                }
                 if(dx == 0)
                 {
+
                     //nước đi đầu tiên 2 o
                     if (Point.Y == 2 && x.Y - Point.Y == 2
                         && (this.Board.checkPiece(new Point(Point.X, Point.Y + 1), PieceDigits.Empty)
@@ -46,7 +57,15 @@ namespace ChessClone
             }
             else
             {
-                if(dx == 0)
+                if (this.Point.Y == 4 && x.Y == 3 && Math.Abs(Point.X - x.X) == 1)
+                {
+                    Piece piece = this.Board.GetPiece(new Point(x.X, x.Y + 1));
+                    if (piece.Digit == PieceDigits.Pawn && piece.getFirstMove())
+                    {
+                        return true;
+                    }
+                }
+                if (dx == 0)
                 {
                     //nước đi đầu tiên 2 o
                     if (Point.Y == 7 && -x.Y + Point.Y == 2
@@ -86,7 +105,17 @@ namespace ChessClone
         {
             throw new NotImplementedException();
         }
-        public override void deleteFirstMove(){}
+        public override void deleteFirstMove(){
+            FisrtMove = false;
+        }
+        public override void updateFirstMove()
+        {
+            FisrtMove=true;
+        }
+        public override bool getFirstMove()
+        {
+            return FisrtMove;
+        }
     }
 }
 

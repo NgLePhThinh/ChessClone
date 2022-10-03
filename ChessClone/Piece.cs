@@ -57,7 +57,8 @@ namespace ChessClone
             dy = Math.Abs(Point.Y - x.Y);
         }
         public abstract void deleteFirstMove();
-        
+        public abstract void updateFirstMove();
+        public abstract bool getFirstMove();
 
     }
 }

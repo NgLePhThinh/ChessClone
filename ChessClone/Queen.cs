@@ -35,7 +35,13 @@ namespace ChessClone
         }
         public override void deleteFirstMove()
         {
-           
+        }
+        public override void updateFirstMove()
+        {
+        }
+        public override bool getFirstMove()
+        {
+            return false;
         }
     }
 }
